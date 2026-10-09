@@ -1,9 +1,10 @@
 <script setup>
-import { ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { salvarSessao } from '../auth/auth'
 import { login } from '../services/authService'
 import { extrairErro } from '../services/api'
+import { softBlurIn } from '../utils/motion'
 
 const route = useRoute()
 const router = useRouter()
@@ -26,26 +27,70 @@ async function entrar() {
     carregando.value = false
   }
 }
+
+// Entrada do título (soft-blur-in): toca uma vez ao abrir a tela e respeita
+// prefers-reduced-motion (ver utils/motion.js).
+const titulo = ref(null)
+let cancelarAnimacao = null
+
+onMounted(() => {
+  cancelarAnimacao = softBlurIn(titulo.value)
+})
+
+onBeforeUnmount(() => {
+  cancelarAnimacao?.()
+})
 </script>
 
 <template>
-  <main class="container container-estreito">
-    <h1>Sistema de Gestão de Alunos</h1>
+  <main class="container container-estreito pagina-centrada">
+    <header class="cabecalho-pagina">
+      <div>
+        <h1 ref="titulo">Sistema de Gestão de Alunos</h1>
+        <p class="texto-apoio">Entre para cadastrar e consultar alunos.</p>
+      </div>
+    </header>
 
     <form class="card" @submit.prevent="entrar">
-      <h2>Entrar</h2>
-
       <p v-if="erro" class="alerta alerta-erro" role="alert">{{ erro }}</p>
 
-      <label for="username">Usuário</label>
-      <input id="username" v-model="username" type="text" autocomplete="username" required autofocus />
+      <div class="campo">
+        <label for="username">Usuário</label>
+        <input
+          id="username"
+          v-model="username"
+          class="input"
+          type="text"
+          autocomplete="username"
+          autocapitalize="none"
+          spellcheck="false"
+          required
+          autofocus
+        />
+      </div>
 
-      <label for="password">Senha</label>
-      <input id="password" v-model="password" type="password" autocomplete="current-password" required />
+      <div class="campo">
+        <label for="password">Senha</label>
+        <input
+          id="password"
+          v-model="password"
+          class="input"
+          type="password"
+          autocomplete="current-password"
+          required
+        />
+      </div>
 
-      <button type="submit" class="btn btn-primario" :disabled="carregando">
-        {{ carregando ? 'Entrando...' : 'Entrar' }}
-      </button>
+      <div class="card-rodape">
+        <button
+          type="submit"
+          class="btn btn-primario btn-grande btn-bloco"
+          :disabled="carregando"
+          :aria-busy="carregando"
+        >
+          {{ carregando ? 'Entrando...' : 'Entrar' }}
+        </button>
+      </div>
     </form>
   </main>
 </template>
