@@ -49,7 +49,7 @@ O backend lê a conexão do `backend/src/main/resources/application.properties`.
 |---|---|
 | `DB_URL` | `jdbc:mysql://localhost:3306/sistema_alunos?...` |
 | `DB_USERNAME` | `root` |
-| `DB_PASSWORD` | `root` |
+| `DB_PASSWORD` | `(sem senha)` |
 
 Se a sua senha do MySQL for outra, defina `DB_PASSWORD` no ambiente ou altere o `application.properties`.
 
@@ -60,7 +60,7 @@ Se a sua senha do MySQL for outra, defina `DB_PASSWORD` no ambiente ou altere o 
 ```bash
 cd backend
 ./mvnw spring-boot:run          # Linux/macOS
-.\mvnw.cmd spring-boot:run      # Windows (PowerShell)
+mvn spring-boot:run      # Windows (PowerShell)
 ```
 
 A API sobe em `http://localhost:8080`.
